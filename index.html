@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Python للمبدعين الصغار - المحاضرة الأولى">
+    <meta name="theme-color" content="#306998">
+    <title>Python للمبدعين الصغار - المحاضرة 1</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ═══════════════════════════════════════════════
+           CSS Variables - Design System
+           ═══════════════════════════════════════════════ */
+        :root {
+            /* Primary Colors - Python Brand */
+            --python-blue: #306998;
+            --python-yellow: #FFD43B;
+            --python-blue-dark: #1e4d6f;
+            --python-yellow-light: #ffe680;
+            
+            /* Secondary Colors */
+            --energy-orange: #FF6B35;
+            --success-green: #4CAF50;
+            --playful-purple: #9C27B0;
+            --alert-red: #F44336;
+            --info-blue: #2196F3;
+            
+            /* Neutral Colors */
+            --dark-bg: #1a1a2e;
+            --light-bg: #f8f9fa;
+            --white: #ffffff;
+            --text-dark: #2c3e50;
+            --text-light: #ecf0f1;
+            --text-muted: #7f8c8d;
+            --border-color: #e0e0e0;
+            
+            /* Code Colors */
+            --code-bg: #282c34;
+            --code-keyword: #c678dd;
+            --code-string: #98c379;
+            --code-function: #61afef;
+            --code-comment: #5c6370;
+            --code-number: #d19a66;
+            
+            /* Spacing */
+            --spacing-xs: 8px;
+            --spacing-sm: 16px;
+            --spacing-md: 24px;
+            --spacing-lg: 32px;
+            --spacing-xl: 48px;
+            
+            /* Border Radius */
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+            --radius-full: 9999px;
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.15);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.2);
+            --shadow-xl: 0 16px 64px rgba(0,0,0,0.3);
+            
+            /* Transitions */
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.3s ease;
+            --transition-slow: 0.5s ease;
+            
+            /* Typography */
+            --font-arabic: 'Cairo', 'Tajawal', sans-serif;
+            --font-code: 'Fira Code', 'Courier New', monospace;
+            
+            /* Accessibility */
+            --focus-ring: 0 0 0 3px rgba(48, 105, 152, 0.5);
+        }
+
+        /* ═══════════════════════════════════════════════
+           Reset & Base Styles
+           ═══════════════════════════════════════════════ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-arabic);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow-x: hidden;
+            color: var(--text-dark);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Focus States for Accessibility */
+        button:focus-visible,
+        a:focus-visible,
+        input:focus-visible {
+            outline: none;
+            box-shadow: var(--focus-ring);
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════
+           Splash Screen
+           ═══════════════════════════════════════════════ */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--python-blue) 0%, var(--dark-bg) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            animation: fadeOut 1s ease-in-out 4s forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+
+        .python-snake {
+            width: 200px;
+            height: 200px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .splash-title {
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 900;
+            color: var(--python-yellow);
+            margin-top: 2rem;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            animation: zoomIn 0.8s ease-out;
+            text-align: center;
+            padding: 0 1rem;
+        }
+
+        .splash-subtitle {
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            color: var(--text-light);
+            margin-top: 1rem;
+            animation: fadeInUp 0.8s ease-out 0.5s both;
+            text-align: center;
+            padding: 0 1rem;
+        }
+
+        /* ═══════════════════════════════════════════════
+           Progress Bar
+           ═══════════════════════════════════════════════ */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            z-index: 1001;
+            backdrop-filter: blur(10px);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--python-yellow), var(--energy-orange));
+            transition: width var(--transition-normal);
+            box-shadow: 0 0 10px rgba(255, 212, 59, 0.5);
+        }
+
+        /* ═══════════════════════════════════════════════
+           Main Container
+           ═══════════════════════════════════════════════ */
+        .presentation-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            display: none;
+        }
+
+        .presentation-container.active {
+            display: block;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* ═══════════════════════════════════════════════
+           Slide Styles
+           ═══════════════════════════════════════════════ */
+        .slide {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: clamp(30px, 5vw, 60px);
+            margin-bottom: 40px;
+            box-shadow: var(--shadow-xl);
+            display: none;
+            animation: slideIn 0.6s ease-out;
+            min-height: 80vh;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 5px solid var(--python-yellow);
+        }
+
+        .slide-title {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 900;
+            color: var(--python-blue);
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+
+        .slide-subtitle {
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            color: var(--energy-orange);
+            font-weight: 700;
+        }
+
+        /* ═══════════════════════════════════════════════
+           Content Grid
+           ═══════════════════════════════════════════════ */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            color: var(--white);
+            text-align: center;
+            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity var(--transition-normal);
+        }
+
+        .info-card:hover::before {
+            opacity: 1;
+        }
+
+        .info-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .info-card.purple {
+            background: linear-gradient(135deg, #9C27B0 0%, #673ab7 100%);
+        }
+
+        .info-card.green {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        }
+
+        .info-card.orange {
+            background: linear-gradient(135deg, #FF6B35 0%, #f7931e 100%);
+        }
+
+        .card-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .card-text {
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
+        /* ═══════════════════════════════════════════════
+           Code Blocks
+           ═══════════════════════════════════════════════ */
+        .code-container {
+            background: var(--code-bg);
+            border-radius: var(--radius-md);
+            padding: 30px;
+            margin: 30px 0;
+            position: relative;
+            overflow: hidden;
+            direction: ltr;
+            text-align: left;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .code-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .code-dots {
+            display: flex;
+            gap: 8px;
+            padding: 10px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1;
+        }
+
+        .code-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            transition: transform var(--transition-fast);
+        }
+
+        .code-dot:hover {
+            transform: scale(1.2);
+        }
+
+        .code-dot.red { background: #ff5f56; }
+        .code-dot.yellow { background: #ffbd2e; }
+        .code-dot.green { background: #27ca40; }
+
+        .code-content {
+            font-family: var(--font-code);
+            font-size: clamp(1rem, 2vw, 1.4rem);
+            color: #abb2bf;
+            line-height: 1.8;
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        .code-keyword { color: var(--code-keyword); font-weight: 500; }
+        .code-string { color: var(--code-string); }
+        .code-function { color: var(--code-function); font-weight: 500; }
+        .code-comment { color: var(--code-comment); font-style: italic; }
+        .code-number { color: var(--code-number); }
+
+        /* ═══════════════════════════════════════════════
+           Buttons
+           ═══════════════════════════════════════════════ */
+        .btn-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            border: none;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            font-family: var(--font-arabic);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary {
+            background: var(--python-yellow);
+            color: var(--dark-bg);
+        }
+
+        .btn-secondary {
+            background: var(--python-blue);
+            color: var(--white);
+        }
+
+        .btn-success {
+            background: var(--success-green);
+            color: var(--white);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* ═══════════════════════════════════════════════
+           Quiz Section
+           ═══════════════════════════════════════════════ */
+        .quiz-container {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            margin: 30px 0;
+            box-shadow: var(--shadow-md);
+        }
+
+        .quiz-question {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 30px;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .quiz-option {
+            background: var(--white);
+            padding: 25px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-align: center;
+            border: 3px solid transparent;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .quiz-option:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--python-yellow);
+        }
+
+        .quiz-option.correct {
+            background: var(--success-green);
+            color: var(--white);
+            animation: correctPulse 0.6s;
+            border-color: var(--success-green);
+        }
+
+        .quiz-option.wrong {
+            background: var(--alert-red);
+            color: var(--white);
+            animation: shake 0.6s;
+            border-color: var(--alert-red);
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* ═══════════════════════════════════════════════
+           Flow Diagram
+           ═══════════════════════════════════════════════ */
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 40px 0;
+        }
+
+        .flow-box {
+            background: var(--white);
+            border: 4px solid var(--python-blue);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            text-align: center;
+            min-width: 200px;
+            position: relative;
+            box-shadow: var(--shadow-md);
+            transition: transform var(--transition-normal);
+        }
+
+        .flow-box:hover {
+            transform: scale(1.05);
+        }
+
+        .flow-box::after {
+            content: '→';
+            position: absolute;
+            left: -40px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            color: var(--energy-orange);
+            font-weight: bold;
+        }
+
+        .flow-box:last-child::after {
+            display: none;
+        }
+
+        .flow-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .flow-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        /* ═══════════════════════════════════════════════
+           Navigation
+           ═══════════════════════════════════════════════ */
+        .nav-container {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+            background: rgba(255,255,255,0.95);
+            padding: 15px 30px;
+            border-radius: var(--radius-full);
+            box-shadow: var(--shadow-xl);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: var(--python-blue);
+            color: var(--white);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: var(--python-yellow);
+            color: var(--dark-bg);
+            transform: scale(1.1);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--python-blue);
+        }
+
+        /* ═══════════════════════════════════════════════
+           Comparison Table
+           ═══════════════════════════════════════════════ */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            background: var(--white);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .comparison-table th {
+            background: var(--python-blue);
+            color: var(--white);
+            padding: 20px;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .comparison-table td {
+            padding: 20px;
+            border-bottom: 2px solid var(--border-color);
+            font-size: 1.2rem;
+        }
+
+        .comparison-table tr:hover {
+            background: var(--light-bg);
+        }
+
+        .check { color: var(--success-green); font-size: 1.5rem; }
+        .cross { color: var(--alert-red); font-size: 1.5rem; }
+
+        /* ═══════════════════════════════════════════════
+           Challenge Cards
+           ═══════════════════════════════════════════════ */
+        .challenge-card {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            margin: 20px 0;
+            border-right: 8px solid var(--energy-orange);
+            box-shadow: var(--shadow-md);
+            transition: transform var(--transition-normal);
+        }
+
+        .challenge-card:hover {
+            transform: translateX(-5px);
+        }
+
+        .challenge-card.bronze {
+            background: linear-gradient(135deg, #cd7f32 0%, #b87333 100%);
+            border-right-color: #cd7f32;
+            color: var(--white);
+        }
+
+        .challenge-card.silver {
+            background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+            border-right-color: #c0c0c0;
+        }
+
+        .challenge-card.gold {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            border-right-color: #ffd700;
+        }
+
+        .challenge-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* ═══════════════════════════════════════════════
+           Notes Section
+           ═══════════════════════════════════════════════ */
+        .notes-section {
+            background: #fff9e6;
+            border: 3px dashed var(--python-yellow);
+            border-radius: var(--radius-md);
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .notes-title {
+            font-size: 1.5rem;
+            color: var(--python-blue);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notes-list {
+            list-style: none;
+            padding-right: 0;
+        }
+
+        .notes-list li {
+            padding: 10px;
+            margin: 8px 0;
+            background: var(--white);
+            border-radius: var(--radius-sm);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .notes-list li::before {
+            content: '📌';
+        }
+
+        /* ═══════════════════════════════════════════════
+           Highlight Box
+           ═══════════════════════════════════════════════ */
+        .highlight-box {
+            background: linear-gradient(135deg, var(--python-blue), var(--playful-purple));
+            color: var(--white);
+            padding: 30px;
+            border-radius: var(--radius-md);
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .highlight-box h3 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .highlight-box p {
+            font-size: 1.3rem;
+            line-height: 1.8;
+        }
+
+        /* ═══════════════════════════════════════════════
+           Confetti Animation
+           ═══════════════════════════════════════════════ */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: var(--python-yellow);
+            pointer-events: none;
+            animation: confetti-fall 3s linear forwards;
+            z-index: 9999;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════
+           Responsive Design
+           ═══════════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            .slide {
+                padding: 30px 20px;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .flow-diagram {
+                flex-direction: column;
+            }
+            
+            .flow-box::after {
+                content: '↓';
+                left: 50%;
+                top: auto;
+                bottom: -40px;
+                transform: translateX(-50%);
+            }
+            
+            .nav-container {
+                bottom: 20px;
+                padding: 10px 20px;
+            }
+            
+            .nav-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════
+           Print Styles
+           ═══════════════════════════════════════════════ */
+        @media print {
+            .nav-container,
+            .progress-container,
+            .splash-screen {
+                display: none;
+            }
+            
+            .slide {
+                page-break-after: always;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Splash Screen -->
+    <div class="splash-screen" id="splashScreen">
+        <svg class="python-snake" viewBox="0 0 200 200" aria-label="Python Logo">
+            <ellipse cx="100" cy="100" rx="80" ry="30" fill="#306998" opacity="0.8">
+                <animate attributeName="ry" values="30;35;30" dur="2s" repeatCount="indefinite"/>
+            </ellipse>
+            <circle cx="70" cy="95" r="8" fill="#FFD43B"/>
+            <circle cx="130" cy="95" r="8" fill="#FFD43B"/>
+            <circle cx="72" cy="93" r="3" fill="#1a1a2e"/>
+            <circle cx="132" cy="93" r="3" fill="#1a1a2e"/>
+            <path d="M 85 110 Q 100 120 115 110" stroke="#FFD43B" stroke-width="4" fill="none"/>
+        </svg>
+        <h1 class="splash-title">🐍 Python للمبدعين الصغار</h1>
+        <p class="splash-subtitle">المحاضرة 1: البداية!</p>
+        <p style="color: var(--python-yellow); margin-top: 2rem; font-size: 1.3rem; text-align: center; padding: 0 1rem;">"مرحباً بك في عالم السحر الرقمي"</p>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-container" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+    </div>
+
+    <!-- Main Presentation -->
+    <div class="presentation-container" id="presentationContainer">
+
+        <!-- Slide 1: Welcome -->
+        <div class="slide active" data-slide="1">
+            <div class="slide-header">
+                <h1 class="slide-title">🎉 أهلاً وسهلاً يا أبطال المستقبل!</h1>
+                <p class="slide-subtitle">رحلة مدهشة في عالم البرمجة تبدأ هنا</p>
+            </div>
+
+            <div class="content-grid">
+                <div class="info-card" onclick="showFunFact('youtube')" role="button" tabindex="0" aria-label="معلومات عن YouTube">
+                    <div class="card-icon">🎬</div>
+                    <div class="card-title">YouTube</div>
+                    <div class="card-text">مبني باستخدام Python!</div>
+                </div>
+                <div class="info-card purple" onclick="showFunFact('instagram')" role="button" tabindex="0" aria-label="معلومات عن Instagram">
+                    <div class="card-icon">📸</div>
+                    <div class="card-title">Instagram</div>
+                    <div class="card-text">يستخدم Python في الخلفية</div>
+                </div>
+                <div class="info-card green" onclick="showFunFact('games')" role="button" tabindex="0" aria-label="معلومات عن الألعاب">
+                    <div class="card-icon">🎮</div>
+                    <div class="card-title">الألعاب</div>
+                    <div class="card-text">يمكنك صنع ألعابك الخاصة!</div>
+                </div>
+                <div class="info-card orange" onclick="showFunFact('ai')" role="button" tabindex="0" aria-label="معلومات عن الذكاء الاصطناعي">
+                    <div class="card-icon">🤖</div>
+                    <div class="card-title">الذكاء الاصطناعي</div>
+                    <div class="card-text">Python هي اللغة رقم 1</div>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h3>🌟 هل تعلم؟</h3>
+                <p>كل التطبيقات التي تستخدمها يومياً... بُنيت بالبرمجة!<br>واليوم أنت ستبدأ رحلتك لتصبح مبرمجاً مثل الذين صنعوها!</p>
+            </div>
+
+            <div class="notes-section">
+                <div class="notes-title">📚 ملاحظات مهمة للمراجعة</div>
+                <ul class="notes-list">
+                    <li>Python لغة برمجة سهلة وقوية</li>
+                    <li>تستخدم في YouTube, Instagram, Netflix</li>
+                    <li>يمكنك صنع ألعاب وتطبيقات بها</li>
+                    <li>المستقبل كله يعتمد على البرمجة!</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 2: What is Programming? -->
+        <div class="slide" data-slide="2">
+            <div class="slide-header">
+                <h1 class="slide-title">🤔 ما هي البرمجة؟</h1>
+                <p class="slide-subtitle">لغة التحدث مع الكمبيوتر</p>
+            </div>
+
+            <div class="flow-diagram">
+                <div class="flow-box">
+                    <div class="flow-icon">👦</div>
+                    <div class="flow-text">أنت تفكر بالعربي</div>
+                </div>
+                <div class="flow-box" style="border-color: var(--python-yellow); background: #fff9e6;">
+                    <div class="flow-icon">🔄</div>
+                    <div class="flow-text">البرمجة = المترجم</div>
+                </div>
+                <div class="flow-box">
+                    <div class="flow-icon">💻</div>
+                    <div class="flow-text">الكمبيوتر ينفذ</div>
+                </div>
+            </div>
+
+            <div class="code-container">
+                <div class="code-dots">
+                    <span class="code-dot red"></span>
+                    <span class="code-dot yellow"></span>
+                    <span class="code-dot green"></span>
+                </div>
+                <div class="code-content">
+                    <span class="code-comment"># أنت تفكر:</span><br>
+                    <span class="code-string">"أريد رسم دائرة حمراء"</span><br><br>
+                    <span class="code-comment"># البرمجة تترجم:</span><br>
+                    <span class="code-function">circle</span>(x=<span class="code-number">50</span>, y=<span class="code-number">50</span>, r=<span class="code-number">25</span>, color=<span class="code-string">'red'</span>)<br><br>
+                    <span class="code-comment"># الكمبيوتر ينفذ:</span><br>
+                    <span class="code-string">⭕ (الدائرة تظهر!)</span>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h3>💡 البرمجة = فن التحدث مع الكمبيوتر!</h3>
+                <p>مثلما تتحدث مع صديقك بالعربي، تتحدث مع الكمبيوتر بـ Python!</p>
+            </div>
+
+            <div class="notes-section">
+                <div class="notes-title">📌 النقاط الرئيسية</div>
+                <ul class="notes-list">
+                    <li>الكمبيوتر مثل روبوت ينفذ الأوامر بدقة</li>
+                    <li>البرمجة هي اللغة التي يفهمها الكمبيوتر</li>
+                    <li>Python سهلة مثل القراءة والكتابة</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 3: Who is a Programmer? -->
+        <div class="slide" data-slide="3">
+            <div class="slide-header">
+                <h1 class="slide-title">🦸 من هو المبرمج؟</h1>
+                <p class="slide-subtitle">شخص عادي بقوى خارقة!</p>
+            </div>
+
+            <div class="content-grid">
+                <div class="info-card">
+                    <div class="card-icon">💡</div>
+                    <div class="card-title">حل المشكلات</div>
+                    <div class="card-text">يرى مشكلة → يفكر → يصنع حلاً!</div>
+                </div>
+                <div class="info-card purple">
+                    <div class="card-icon">🎯</div>
+                    <div class="card-title">الإبداع</div>
+                    <div class="card-text">يتخيل → يصمم → يخلق بالكود!</div>
+                </div>
+                <div class="info-card green">
+                    <div class="card-icon">🔧</div>
+                    <div class="card-title">المثابرة</div>
+                    <div class="card-text">فشل 10 مرات؟ يجرب المرة 11! 💪</div>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h3>🌟 قصص ملهمة</h3>
+                <p><strong>محمد حمزة</strong> (12 سنة) - صمم 5 تطبيقات!<br>
+                <strong>تنبيتا ناث</strong> (7 سنوات) - بدأت البرمجة وتُدرس الآخرين!<br>
+                <strong>مارك زوكربيرج</strong> - بدأ مثلهم وصنع Facebook!</p>
+            </div>
+
+            <div class="notes-section">
+                <div class="notes-title">🎯 صفات المبرمج الناجح</div>
+                <ul class="notes-list">
+                    <li>لا يستسلم عند الفشل</li>
+                    <li>يحب التعلم والاكتشاف</li>
+                    <li>يفكر بطريقة إبداعية</li>
+                    <li>يحب حل الألغاز والمشكلات</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 4: Why Python? -->
+        <div class="slide" data-slide="4">
+            <div class="slide-header">
+                <h1 class="slide-title">🐍 لماذا Python؟</h1>
+                <p class="slide-subtitle">اللغة الأسهل والأقوى!</p>
+            </div>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>اللغة</th>
+                        <th>الكود</th>
+                        <th>السهولة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Python 🐍</strong></td>
+                        <td><code>print("مرحباً")</code></td>
+                        <td><span class="check">✓ سطر واحد!</span></td>
+                    </tr>
+                    <tr>
+                        <td>Java ☕</td>
+                        <td><code>public class Hello {<br>  public static void main...<br>    System.out.println("مرحباً");<br>  }<br>}</code></td>
+                        <td><span class="cross">✗ 6 أسطر!</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="content-grid">
+                <div class="info-card">
+                    <div class="card-icon">✅</div>
+                    <div class="card-title">الأسهل</div>
+                    <div class="card-text">تقرأها مثل الإنجليزية!</div>
+                </div>
+                <div class="info-card purple">
+                    <div class="card-icon">✅</div>
+                    <div class="card-title">الأقوى</div>
+                    <div class="card-text">تصنع بها أي شيء!</div>
+                </div>
+                <div class="info-card green">
+                    <div class="card-icon">✅</div>
+                    <div class="card-title">الأشهر</div>
+                    <div class="card-text">رقم 1 في العالم!</div>
+                </div>
+                <div class="info-card orange">
+                    <div class="card-icon">✅</div>
+                    <div class="card-title">المطلوبة</div>
+                    <div class="card-text">الشركات تبحث عنك!</div>
+                </div>
+            </div>
+
+            <div class="notes-section">
+                <div class="notes-title">📊 حقائق مهمة</div>
+                <ul class="notes-list">
+                    <li>Python من أسهل لغات البرمجة للمبتدئين</li>
+                    <li>تستخدم في الذكاء الاصطناعي والبيانات الضخمة</li>
+                    <li>مجانية ومفتوحة المصدر</li>
+                    <li>مجتمع ضخم يدعمك دائماً</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 5: First Code -->
+        <div class="slide" data-slide="5">
+            <div class="slide-header">
+                <h1 class="slide-title">🎉 أول كود في حياتك!</h1>
+                <p class="slide-subtitle">لحظة تاريخية!</p>
+            </div>
+
+            <div class="code-container" style="font-size: 2rem; padding: 50px;">
+                <div class="code-dots">
+                    <span class="code-dot red"></span>
+                    <span class="code-dot yellow"></span>
+                    <span class="code-dot green"></span>
+                </div>
+                <div class="code-content">
+                    <span class="code-function">print</span>(<span class="code-string">"مرحباً بالعالم!"</span>)
+                </div>
+            </div>
+
+            <div class="content-grid">
+                <div class="info-card">
+                    <div class="card-icon">🗣️</div>
+                    <div class="card-title">print</div>
+                    <div class="card-text">تعني "اطبع" أو "اعرض"</div>
+                </div>
+                <div class="info-card purple">
+                    <div class="card-icon">📦</div>
+                    <div class="card-title">()</div>
+                    <div class="card-text">صندوق نضع فيه ما نريد طباعته</div>
+                </div>
+                <div class="info-card green">
+                    <div class="card-icon">📝</div>
+                    <div class="card-title">""</div>
+                    <div class="card-text">علامات التنصيص = هذا نص</div>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h3>🎯 جرب الآن!</h3>
+                <p>غيّر الرسالة لاسمك أو أي شيء تحبه!<br>
+                <code>print("أنا مبرمج صغير! 🐍")</code></p>
+            </div>
+
+            <div class="btn-container">
+                <button class="btn btn-success" onclick="runCode()" aria-label="تشغيل الكود">
+                    <i class="fas fa-play"></i> شغّل الكود
+                </button>
+                <button class="btn btn-primary" onclick="showExample()" aria-label="عرض أمثلة إضافية">
+                    <i class="fas fa-lightbulb"></i> أمثلة إضافية
+                </button>
+            </div>
+
+            <div id="codeOutput" style="display: none; background: var(--code-bg); color: var(--success-green); padding: 30px; border-radius: 15px; margin-top: 20px; font-size: 1.5rem; text-align: center;">
+                مرحباً بالعالم! 🎊
+            </div>
+
+            <div class="notes-section">
+                <div class="notes-title">⚠️ أخطاء شائعة تجنبها</div>
+                <ul class="notes-list">
+                    <li><code>print(مرحبا)</code> ❌ - نسيت علامات التنصيص</li>
+                    <li><code>Print("مرحبا")</code> ❌ - P كبيرة (Python حساس للحروف)</li>
+                    <li><code>print["مرحبا"]</code> ❌ - استخدم () وليس []</li>
+                    <li><code>print("مرحبا")</code> ✅ - الصحيح!</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 6: Advanced Printing -->
+        <div class="slide" data-slide="6">
+            <div class="slide-header">
+                <h1 class="slide-title">🎨 تقنيات متقدمة!</h1>
+                <p class="slide-subtitle">اجعل كودك أكثر إثارة</p>
+            </div>
+
+            <div class="challenge-card bronze">
+                <div class="challenge-title">🥉 التقنية 1: التكرار السحري *</div>
+                <div class="code-container">
+                    <div class="code-content">
+                        <span class="code-function">print</span>(<span class="code-string">"="</span> * <span class="code-number">30</span>)<br>
+                        <span class="code-comment"># النتيجة: ==============================</span><br><br>
+                        <span class="code-function">print</span>(<span class="code-string">"⭐"</span> * <span class="code-number">10</span>)<br>
+                        <span class="code-comment"># النتيجة: ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="challenge-card silver">
+                <div class="challenge-title">🥈 التقنية 2: السطر الجديد \n</div>
+                <div class="code-container">
+                    <div class="code-content">
+                        <span class="code-function">print</span>(<span class="code-string">"مرحباً</span><span class="code-keyword">\n</span><span class="code-string">كيف حالك؟</span><span class="code-keyword">\n</span><span class="code-string">أنا بخير!")</span><br><br>
+                        <span class="code-comment"># النتيجة:</span><br>
+                        <span class="code-comment"># مرحباً</span><br>
+                        <span class="code-comment"># كيف حالك؟</span><br>
+                        <span class="code-comment"># أنا بخير!</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="challenge-card gold">
+                <div class="challenge-title">🥇 التقنية 3: أشكال جميلة</div>
+                <div class="code-container">
+                    <div class="code-content">
+                        <span class="code-function">print</span>(<span class="code-string">"""</span><br>
+                        ╔════════════════╗<br>
+                        ║  مرحباً بك!   ║<br>
+                        ╚════════════════╝<br>
+                        <span class="code-string">"""</span>)
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-container">
+                <button class="btn btn-primary" onclick="showAllExamples()" aria-label="عرض كل الأمثلة">
+                    <i class="fas fa-eye"></i> شاهد كل الأمثلة
+                </button>
+            </div>
+
+            <div class="notes-section">
+                <div class="notes-title">📝 ملخص التقنيات</div>
+                <ul class="notes-list">
+                    <li><code>*</code> للتكرار: <code>"*" * 5</code> = *****</li>
+                    <li><code>\n</code> لسطر جديد</li>
+                    <li><code>"""</code> لكتابة عدة أسطر</li>
+                    <li>استخدم Emojis لجعل الكود ممتعاً! 😊</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 7: Quiz -->
+        <div class="slide" data-slide="7">
+            <div class="slide-header">
+                <h1 class="slide-title">🎮 اختبر معلوماتك!</h1>
+                <p class="slide-subtitle">هل أنت مستعد للتحدي؟</p>
+            </div>
+
+            <div class="quiz-container">
+                <div class="quiz-question">
+                    ما الأمر المستخدم لطباعة نص في Python؟
+                </div>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(this, false)" role="button" tabindex="0">
+                        A) show()
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true)" role="button" tabindex="0">
+                        B) print() ✅
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)" role="button" tabindex="0">
+                        C) display()
+                    </div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false)" role="button" tabindex="0">
+                        D) write()
+                    </div>
+                </div>
+                <div id="quizFeedback" style="margin-top: 20px; font-size: 1.3rem; text-align: center; display: none;" role="alert"></div>
+            </div>
+
+            <div class="highlight-box">
+                <h3>📚 راجع قبل الإجابة</h3>
+                <p>تذكر: print() هي الأمر الأساسي للطباعة<br>
+                مثل "قل" أو "اعرض" بالعربي!</p>
+            </div>
+        </div>
+
+        <!-- Slide 8: Homework -->
+        <div class="slide" data-slide="8">
+            <div class="slide-header">
+                <h1 class="slide-title">📋 الواجب المنزلي</h1>
+                <p class="slide-subtitle">تحدي المبرمجين الصغار!</p>
+            </div>
+
+            <div class="challenge-card bronze">
+                <div class="challenge-title">🥉 المهمة 1: قصة قصيرة (30 نقطة)</div>
+                <p>اكتب قصة من 7 أسطر عن يوم في حياتك<br>
+                استخدم print لكل سطر مع رموز تعبيرية!</p>
+                <div class="code-container">
+                    <div class="code-content">
+                        <span class="code-function">print</span>(<span class="code-string">"🌅 استيقظت في صباح جميل"</span>)<br>
+                        <span class="code-function">print</span>(<span class="code-string">"🎮 لعبت لعبتي المفضلة"</span>)<br>
+                        <span class="code-comment"># أكمل أنت...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="challenge-card silver">
+                <div class="challenge-title">🥈 المهمة 2: بوستر فيلمك المفضل (40 نقطة)</div>
+                <p>صمم إعلان لفيلمك أو لعبتك المفضلة</p>
+                <div class="code-container">
+                    <div class="code-content">
+                        <span class="code-function">print</span>(<span class="code-string">"*"</span> * <span class="code-number">30</span>)<br>
+                        <span class="code-function">print</span>(<span class="code-string">"  🎬 Spider-Man 🕷️"</span>)<br>
+                        <span class="code-function">print</span>(<span class="code-string">"*"</span> * <span class="code-number">30</span>)<br>
+                        <span class="code-comment"># أكمل المعلومات...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="challenge-card gold">
+                <div class="challenge-title">🥇 المهمة 3: ASCII Art (30 نقطة)</div>
+                <p>ارسم شكلاً باستخدام الحروف والرموز</p>
+                <div class="code-container">
+                    <div class="code-content">
+                        <span class="code-function">print</span>(<span class="code-string">"    *    "</span>)<br>
+                        <span class="code-function">print</span>(<span class="code-string">"   ***   "</span>)<br>
+                        <span class="code-function">print</span>(<span class="code-string">"  *****  "</span>)<br>
+                        <span class="code-comment"># شجرة بسيطة!</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h3>🎁 نقاط إضافية!</h3>
+                <p>المهمة الإبداعية: صمم قائمة طعام لمطعم خيالي (50 نقطة)<br>
+                استخدم كل ما تعلمته اليوم!</p>
+            </div>
+
+            <div class="notes-section">
+                <div class="notes-title">📤 طريقة التسليم</div>
+                <ul class="notes-list">
+                    <li>اضغط Share في Replit</li>
+                    <li>انسخ الرابط وأرسله للمدرس</li>
+                    <li>الموعد: قبل المحاضرة القادمة</li>
+                    <li>لا تنتظر آخر لحظة! ابدأ الآن 🚀</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 9: Summary -->
+        <div class="slide" data-slide="9">
+            <div class="slide-header">
+                <h1 class="slide-title">📚 ملخص المحاضرة</h1>
+                <p class="slide-subtitle">ماذا تعلمنا اليوم؟</p>
+            </div>
+
+            <div class="content-grid">
+                <div class="info-card">
+                    <div class="card-icon">💻</div>
+                    <div class="card-title">الكمبيوتر</div>
+                    <div class="card-text">آلة تنفذ أوامر دقيقة</div>
+                </div>
+                <div class="info-card purple">
+                    <div class="card-icon">🐍</div>
+                    <div class="card-title">Python</div>
+                    <div class="card-text">لغة سهلة وقوية</div>
+                </div>
+                <div class="info-card green">
+                    <div class="card-icon"></div>
+                    <div class="card-title">print()</div>
+                    <div class="card-text">الأمر الأساسي</div>
+                </div>
+                <div class="info-card orange">
+                    <div class="card-icon">🎨</div>
+                    <div class="card-title">الإبداع</div>
+                    <div class="card-text">استخدم * و \n</div>
+                </div>
+            </div>
+
+            <div class="highlight-box" style="background: linear-gradient(135deg, var(--success-green), #45a049);">
+                <h3>🏆 إنجازاتك اليوم</h3>
+                <p>✅ فهمت ما هي البرمجة<br>
+                ✅ عرفت لماذا Python<br>
+                ✅ كتبت أول كود في حياتك!<br>
+                ✅ تعلمت تقنيات متقدمة<br>
+                ✅ أصبحت مبرمجاً! 🎓</p>
+            </div>
+
+            <div class="notes-section">
+                <div class="notes-title"> المحاضرة القادمة</div>
+                <ul class="notes-list">
+                    <li>المتغيرات - ذاكرة الكمبيوتر!</li>
+                    <li>كيف نخزن المعلومات</li>
+                    <li>العمليات الحسابية</li>
+                    <li>مشاريع أكثر إثارة!</li>
+                </ul>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px; font-size: 2rem; color: var(--python-blue);">
+                <p>🌟 تذكروا دائماً:</p>
+                <p>كل خطأ = فرصة للتعلم 💪</p>
+                <p>المثابرة = طريق النجاح 🎯</p>
+                <p>أنتم قادرون على كل شيء! 🚀</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-container">
+        <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled aria-label="الشريحة السابقة">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        <div class="slide-counter">
+            <span id="currentSlide">1</span> / <span id="totalSlides">9</span>
+        </div>
+        <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)" aria-label="الشريحة التالية">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════════════
+        // Service Worker Registration (PWA)
+        // ═══════════════════════════════════════════════
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(reg => console.log('Service Worker registered'))
+                .catch(err => console.log('Service Worker registration failed'));
+        }
+
+        // ═══════════════════════════════════════════════
+        // Main Application Logic
+        // ═══════════════════════════════════════════════
+        let currentSlideIndex = 1;
+        const totalSlides = 9;
+
+        // Hide splash screen and show presentation
+        setTimeout(() => {
+            document.getElementById('splashScreen').style.display = 'none';
+            document.getElementById('presentationContainer').classList.add('active');
+            updateProgressBar();
+        }, 4000);
+
+        function changeSlide(direction) {
+            const slides = document.querySelectorAll('.slide');
+            slides[currentSlideIndex - 1].classList.remove('active');
+            
+            currentSlideIndex += direction;
+            
+            if (currentSlideIndex < 1) currentSlideIndex = 1;
+            if (currentSlideIndex > totalSlides) currentSlideIndex = totalSlides;
+            
+            slides[currentSlideIndex - 1].classList.add('active');
+            
+            // Update buttons
+            document.getElementById('prevBtn').disabled = currentSlideIndex === 1;
+            document.getElementById('nextBtn').disabled = currentSlideIndex === totalSlides;
+            
+            // Update counter
+            document.getElementById('currentSlide').textContent = currentSlideIndex;
+            
+            // Update progress
+            updateProgressBar();
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateProgressBar() {
+            const progress = (currentSlideIndex / totalSlides) * 100;
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = progress + '%';
+            
+            // Update ARIA
+            const progressContainer = document.querySelector('.progress-container');
+            progressContainer.setAttribute('aria-valuenow', progress);
+        }
+
+        function checkAnswer(element, isCorrect) {
+            // Reset all options
+            document.querySelectorAll('.quiz-option').forEach(opt => {
+                opt.classList.remove('correct', 'wrong');
+            });
+            
+            const feedback = document.getElementById('quizFeedback');
+            
+            if (isCorrect) {
+                element.classList.add('correct');
+                feedback.style.display = 'block';
+                feedback.innerHTML = '🎉 أحسنت! إجابة صحيحة!';
+                feedback.style.color = 'var(--success-green)';
+                createConfetti();
+            } else {
+                element.classList.add('wrong');
+                feedback.style.display = 'block';
+                feedback.innerHTML = '💡 حاول مرة أخرى! تذكر: print() هي الأمر الصحيح';
+                feedback.style.color = 'var(--alert-red)';
+            }
+        }
+
+        function createConfetti() {
+            const colors = ['#FFD43B', '#306998', '#4CAF50', '#FF6B35'];
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => confetti.remove(), 4000);
+            }
+        }
+
+        function runCode() {
+            const output = document.getElementById('codeOutput');
+            output.style.display = 'block';
+            output.style.animation = 'slideIn 0.5s ease-out';
+            createConfetti();
+        }
+
+        function showExample() {
+            alert('💡 أمثلة إضافية:\n\nprint("أنا أحب Python 🐍")\nprint("⭐" * 20)\nprint("سطر1\\nسطر2")');
+        }
+
+        function showAllExamples() {
+            alert('📚 جميع الأمثلة:\n\n1. التكرار: print("*" * 10)\n2. السطر الجديد: print("أول\\nثاني")\n3. أشكال: print("""\\n  ***\\n *****\\n""")\n4. Emojis: print("مرحباً 👋")');
+        }
+
+        function showFunFact(app) {
+            const facts = {
+                youtube: '🎬 YouTube يستخدم Python لتحليل الفيديوهات واقتراح المحتوى المناسب لك!',
+                instagram: '📸 Instagram يستخدم Python لمعالجة الصور والفيديوهات!',
+                games: '🎮 يمكنك صنع ألعاب مثل Minecraft و Roblox باستخدام Python!',
+                ai: '🤖 الذكاء الاصطناعي والروبوتات تُبرمج بـ Python!'
+            };
+            alert(facts[app]);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(1);
+            if (e.key === 'ArrowRight') changeSlide(-1);
+        });
+
+        // Touch support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            if (touchStartX - touchEndX > 50) changeSlide(1);
+            if (touchEndX - touchStartX > 50) changeSlide(-1);
+        });
+
+        // ═══════════════════════════════════════════════
+        // Performance Optimization
+        // ═══════════════════════════════════════════════
+        
+        // Lazy load images (if any)
+        if ('IntersectionObserver' in window) {
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.classList.remove('lazy');
+                        observer.unobserve(img);
+                    }
+                });
+            });
+            
+            document.querySelectorAll('img.lazy').forEach(img => {
+                imageObserver.observe(img);
+            });
+        }
+
+        // ═══════════════════════════════════════════════
+        // Analytics (Optional)
+        // ═══════════════════════════════════════════════
+        
+        // Track slide views
+        function trackSlideView(slideNumber) {
+            // Implement your analytics here
+            console.log(`Slide ${slideNumber} viewed`);
+        }
+
+        // Track quiz answers
+        function trackQuizAnswer(questionId, answer, isCorrect) {
+            // Implement your analytics here
+            console.log(`Q${questionId}: ${answer} - ${isCorrect ? 'Correct' : 'Wrong'}`);
+        }
+
+        // ═══════════════════════════════════════════════
+        // Offline Support
+        // ═══════════════════════════════════════════════
+        
+        window.addEventListener('online', () => {
+            console.log('You are online');
+        });
+
+        window.addEventListener('offline', () => {
+            console.log('You are offline');
+            // Show offline notification
+            alert('أنت غير متصل بالإنترنت. بعض الميزات قد لا تعمل.');
+        });
+    </script>
+</body>
+</html>
